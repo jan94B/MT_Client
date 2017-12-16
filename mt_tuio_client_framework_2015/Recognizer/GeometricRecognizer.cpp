@@ -1,7 +1,9 @@
 #include "GeometricRecognizer.h"
 #include <limits>
+#include <limits.h>
 
-#define MAX_DOUBLE std::numeric_limits<double>::max();
+//#define MAX_DOUBLE std::numeric_limits<double>::max();
+//#define MAX_DOUBLE = 1.79769e+308;
 //#define MAX_DOUBLE std::numeric_limits<double>;
 
 namespace DollarRecognizer
@@ -37,29 +39,29 @@ namespace DollarRecognizer
 	{
 		SampleGestures samples;
 
-		addTemplate("Arrow", samples.getGestureArrow());
-		addTemplate("Caret", samples.getGestureCaret());
-		addTemplate("CheckMark", samples.getGestureCheckMark());
+		//addTemplate("Arrow", samples.getGestureArrow());
+		//addTemplate("Caret", samples.getGestureCaret());
+		//addTemplate("CheckMark", samples.getGestureCheckMark());
 		addTemplate("Circle", samples.getGestureCircle());
 		addTemplate("Delete", samples.getGestureDelete());
-		addTemplate("Diamond", samples.getGestureDiamond());
+		//addTemplate("Diamond", samples.getGestureDiamond());
 		//addTemplate("LeftCurlyBrace", samples.getGestureLeftCurlyBrace());
-		addTemplate("LeftSquareBracket", samples.getGestureLeftSquareBracket());
-		addTemplate("LeftToRightLine", samples.getGestureLeftToRightLine());
-		addTemplate("LineDownDiagonal", samples.getGestureLineDownDiagonal());
-		addTemplate("Pigtail", samples.getGesturePigtail());
-		addTemplate("QuestionMark", samples.getGestureQuestionMark());
-		addTemplate("Rectangle", samples.getGestureRectangle());
+		//addTemplate("LeftSquareBracket", samples.getGestureLeftSquareBracket());
+		//addTemplate("LeftToRightLine", samples.getGestureLeftToRightLine());
+		//addTemplate("LineDownDiagonal", samples.getGestureLineDownDiagonal());
+		//addTemplate("Pigtail", samples.getGesturePigtail());
+		//addTemplate("QuestionMark", samples.getGestureQuestionMark());
+		//addTemplate("Rectangle", samples.getGestureRectangle());
 		//addTemplate("RightCurlyBrace", samples.getGestureRightCurlyBrace());
-		addTemplate("RightSquareBracket", samples.getGestureRightSquareBracket());
-		addTemplate("RightToLeftLine", samples.getGestureRightToLeftLine());
-		addTemplate("RightToLeftLine2", samples.getGestureRightToLeftLine2());
-		addTemplate("RightToLeftSlashDown", samples.getGestureRightToLeftSlashDown());
-		addTemplate("Spiral", samples.getGestureSpiral());
-		addTemplate("Star", samples.getGestureStar());
-		addTemplate("Triangle", samples.getGestureTriangle());
+		//addTemplate("RightSquareBracket", samples.getGestureRightSquareBracket());
+		//addTemplate("RightToLeftLine", samples.getGestureRightToLeftLine());
+		//addTemplate("RightToLeftLine2", samples.getGestureRightToLeftLine2());
+		//addTemplate("RightToLeftSlashDown", samples.getGestureRightToLeftSlashDown());
+		//addTemplate("Spiral", samples.getGestureSpiral());
+		//addTemplate("Star", samples.getGestureStar());
+		//addTemplate("Triangle", samples.getGestureTriangle());
 		addTemplate("V", samples.getGestureV());
-		addTemplate("X", samples.getGestureX());
+		//addTemplate("X", samples.getGestureX());
 	}
 
 	int GeometricRecognizer::addTemplate(string name, Path2D points)
@@ -82,10 +84,10 @@ namespace DollarRecognizer
 	Rectangle GeometricRecognizer::boundingBox(Path2D points)
 	{
 		
-		double minX =  MAX_DOUBLE;
-		double maxX = -MAX_DOUBLE;
-		double minY =  MAX_DOUBLE; 
-		double maxY = -MAX_DOUBLE;
+		double minX = 1.79769e+308;
+		double maxX = -1.79769e+308;
+		double minY = 1.79769e+308;
+		double maxY = -1.79769e+308;
 
 		for (Path2DIterator i = points.begin(); i != points.end(); i++)
 		{
@@ -230,7 +232,7 @@ namespace DollarRecognizer
 	
 		//--- Initialize best distance to the largest possible number
 		//--- That way everything will be better than that
-		double bestDistance = MAX_DOUBLE;
+		double bestDistance = 1.79769e+308;
 		//--- We haven't found a good match yet
 		int indexOfBestMatch = -1;
 
