@@ -3,7 +3,6 @@ c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio cli
 c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(172): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(193): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
 c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(194): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(195): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(233): warning C4101: 'threadID': unreferenced local variable
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(237): warning C4101: 'threadID': unreferenced local variable
   Tuio Client Example.vcxproj -> C:\Users\jaann\Documents\GitHub\MT_Client\mt_tuio_client_framework_2015\Debug\Tuio Client Example.exe
   Tuio Client Example.vcxproj -> C:\Users\jaann\Documents\GitHub\MT_Client\mt_tuio_client_framework_2015\Debug\Tuio Client Example.pdb (Partial PDB)

@@ -73,11 +73,11 @@ class Client : public TuioListener {
 
 		if (!path1.empty()) {
 
-			if (tcur->getX() < 0.2 && tcur->getY() > 0.7) {//chek the Position from the input
+			if (tcur->getX() < 0.3 && tcur->getY() > 0.3 && tcur->getY() < 0.6) {//chek the Position from the input
 				RecognitionResult rResult = Gr.recognize(path1);
 				//cout << "Result Name: " << rResult.name << " Score" << rResult.score;
 
-				if (rResult.score > 0.80) { //check if score high enough
+				if (rResult.score > 0.75) { //check if score high enough
 
 					cout << "Result Name: " << rResult.name;
 
@@ -190,9 +190,11 @@ void draw() {
 		glBegin(GL_LINE_STRIP);
 		glLineWidth(1);
 		glColor3f(0.0f, 0.0f, 0.0f);
-		glVertex2f(-1, -0.4);
-		glVertex2f(-0.6, -0.4);
-		glVertex2f(-0.6, -1);
+		glVertex2f(-0.4, -1);
+		glVertex2f(-0.4, 1);
+
+		//glVertex2f(-0.6, -0.4);
+		//glVertex2f(-0.6, -1);
 
 		glEnd();
 		glPopMatrix();
@@ -213,6 +215,8 @@ void tuioThread(void*)
 	tuioClient->addTuioListener(app);
 	tuioClient->connect(true);
 }
+
+
 
 void idle(void)
 {
