@@ -19,8 +19,53 @@ using namespace DollarRecognizer;
 
 TUIO::TuioClient *tuioClient; // global tuioClient for testing
 float lineWidth = 6.5;			//define width of the lines
-bool cleanWindow = false;		//clean the window if it true in the draw method
+bool cleanWindow = true;		//clean the window if it true in the draw method
+bool drawCircle = false;
+bool drawQuad = false;
+vector<long> detectetFingerInQuad;
+vector<TuioCursor> detectetCursorInQuad;
+
+
+vector<Point2D> quadPoints{ { -0.3, -0.3 },// bottom left corner
+							{ -0.3, 0.3 },// top left corner
+							{ 0.3, 0.3 }, // top right corner
+							{ 0.3, -0.3 } };// bottom right corner
+
+
+GLfloat quadVertices[] = {  -0.5, -0.5, 0, // bottom left corner
+							-0.5,  0.5, 0, // top left corner
+							 0.5,  0.5, 0, // top right corner
+							 0.5, -0.5, 0 }; // bottom right corner
+
+
+
 GeometricRecognizer Gr;
+
+float translateXcoords(float x) {
+	if (x > 0.5) {
+		x = (x - 0.5) * 2;
+	}
+	else if (x < 0.5) {
+		x = (x * 2) - 1;
+	}
+	else {
+		x = 0;
+	}
+	return x;
+}
+
+float translateYcoords(float y) {
+	if (y > 0.5) {
+		y = (y - 0.5) * -2;
+	}
+	else if (y < 0.5) {
+		y = ((y * 2) - 1)* -1;
+	}
+	else {
+		y = 0;
+	}
+	return y;
+}
 
 
 class Client : public TuioListener {
@@ -29,26 +74,67 @@ class Client : public TuioListener {
 	
 
 
-
+	
 
 
 	void Client::addTuioObject(TuioObject *tobj){};
-	void Client::updateTuioObject(TuioObject *tobj){
-	
-	};
+	void Client::updateTuioObject(TuioObject *tobj){};
 	void Client::removeTuioObject(TuioObject *tobj){};
 	
 	void Client::addTuioCursor(TuioCursor *tcur)
 	{
-
+		if (quadDetection(translateXcoords((tcur)->getX()), translateYcoords((tcur)->getY()))) {
+			detectetFingerInQuad.push_back((tcur)->getSessionID());
+			detectetCursorInQuad.push_back(*tcur);
+		}
+		
+	
+		
 		//std::cout << "new finger detected: (id=" << tcur->getSessionID() << ", coordinates=" << tcur->getX() << "," << tcur->getY() << ")\n";
 	};
 	void Client::updateTuioCursor(TuioCursor *tcur){
 		//std::cout << "update finger detected: (id=" << tcur->getSessionID() << ", coordinates=" << tcur->getX() << "," << tcur->getY() << ")\n";
 		
+		if (drawQuad) {
+			for (int i = 0; i < detectetCursorInQuad.size(); i++) {
+				if (detectetCursorInQuad.at(i).getSessionID() == (tcur)->getSessionID()) {
+					//cout << "finger is detected and updated\n";
+					moveQuad(translateXcoords((tcur)->getX()) - translateXcoords(detectetCursorInQuad.at(i).getX()), translateYcoords((tcur)->getY()) - translateYcoords(detectetCursorInQuad.at(i).getY()));
+					detectetCursorInQuad.at(i) = (tcur);
+				}
+			}
+		}
+	
+
+
+			//list<TuioPoint>::iterator it = (tcur)->getPath().begin();		<<<<< Fehler !!!!!!
+			//++it;
+			//cout << (*it).getX() << " New: " << (tcur)->getX() << "\n";
+
+		
 	};
 
+	void moveQuad(float xDifference, float yDifference) {
+		for (int i = 0; i < quadPoints.size(); i++) {
+			quadPoints.at(i).x = quadPoints.at(i).x + xDifference;
+			quadPoints.at(i).y = quadPoints.at(i).y + yDifference;
+		}
+	}
 
+	bool quadDetection(float x, float y) {
+		if (drawQuad) {
+			if (x > quadPoints.at(0).x && x < quadPoints.at(3).x && y > quadPoints.at(0).y && y < quadPoints.at(1).y) {
+				cout << "in quad";
+				return true;
+			}
+			else {
+				cout << " not in quad";
+				return false;
+			}
+		}
+
+		return false;
+	}
 	
 
 
@@ -82,11 +168,18 @@ class Client : public TuioListener {
 					cout << "Result Name: " << rResult.name;
 
 					if (rResult.name == "Circle") {
-						cleanWindow = true;
+						drawCircle = true;
 					}
 
+					if (rResult.name == "Delete") {
+						cleanWindow = true;
 
+					}
+					if (rResult.name == "Rectangle") {
+						drawQuad = true;
 
+					}
+					
 
 					if (rResult.name == "V" && lineWidth == 6.5) {
 						lineWidth = 2;
@@ -120,6 +213,7 @@ class Client : public TuioListener {
 
 
 
+
 bool firstDraw = true;
 void draw() {
 	
@@ -146,7 +240,7 @@ void draw() {
 	if (cleanWindow) {
 		glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer (background)
 
-	cleanWindow = false;
+	//cleanWindow = false;
 	}
 	glLineWidth(lineWidth);
 	for (std::list<TuioCursor*>::iterator cursorListIter = cursorList.begin(); cursorListIter != cursorList.end(); ++cursorListIter) {
@@ -156,35 +250,34 @@ void draw() {
 		
 		glBegin(GL_LINE_STRIP);
 		glColor3f(0.0f, 0.0f, 1.0f);
-		for (int i = 0; !tuioList.empty(); i++) {
-			float x;
-			if (tuioList.front().getX() > 0.5) {
-				x = (tuioList.front().getX() - 0.5) * 2;
-			}
-			else if(tuioList.front().getX() < 0.5 ) {
-				x = (tuioList.front().getX() * 2) - 1;
-			}
-			else {
-				x = 0;
-			}
-			float y;
-			if (tuioList.front().getY() > 0.5) {
-				y = (tuioList.front().getY() - 0.5) * -2;
-			}
-			else if (tuioList.front().getY() < 0.5) {
-				y = ((tuioList.front().getY() * 2) -1)* -1;
-			}
-			else {
-				y = 0;
-			}
-			glVertex2f(x,y);    // x, y
-
-			//glVertex2f( tuioList.front().getX() * -1, - tuioList.front().getY());    // x, y
-
+		for (int i = 0; !tuioList.empty(); i++) {	
+			glVertex2f((float)translateXcoords(tuioList.front().getX()),(float) translateYcoords(tuioList.front().getY()));    // x, y
 			tuioList.pop_front();
-			
 		}
 		glEnd();
+		
+	}
+
+	
+		if (drawQuad) {
+			glPushMatrix();
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glBegin(GL_QUADS);
+			glVertex2d(quadPoints.at(0).x, quadPoints.at(0).y);
+			glVertex2d(quadPoints.at(1).x, quadPoints.at(1).y);
+			glVertex2d(quadPoints.at(2).x, quadPoints.at(2).y);
+			glVertex2d(quadPoints.at(3).x, quadPoints.at(3).y);
+
+			glEnd();
+			glPopMatrix();
+		}
+
+
+
+
+		//glVertexPointer(3, GL_FLOAT, 0, quadVertices);
+
+
 
 		glPushMatrix();
 		glBegin(GL_LINE_STRIP);
@@ -192,21 +285,21 @@ void draw() {
 		glColor3f(0.0f, 0.0f, 0.0f);
 		glVertex2f(-0.4, -1);
 		glVertex2f(-0.4, 1);
-
-		//glVertex2f(-0.6, -0.4);
-		//glVertex2f(-0.6, -1);
-
 		glEnd();
 		glPopMatrix();
+
+
 
 		glFlush();  // Render now*/
 
 
 
-	}
+	
 	
 
 }
+
+
 
 void tuioThread(void*)
 {
