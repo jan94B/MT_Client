@@ -22,6 +22,9 @@
     <Filter Include="Source Files\Recognizer">
       <UniqueIdentifier>{a504d6de-0778-4401-8be7-ac9b890279bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Cube">
+      <UniqueIdentifier>{d43b6791-8741-46ba-b91d-076348d84c5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,6 +48,9 @@
     <ClCompile Include="..\Recognizer\GeometricRecognizer.cpp">
       <Filter>Source Files\Recognizer</Filter>
     </ClCompile>
+    <ClCompile Include="..\Cube\Wuerfel.cpp">
+      <Filter>Source Files\Cube</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Recognizer\GeometricRecognizer.h">
@@ -61,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="..\Recognizer\SampleGestures.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Cube\wuerfel.h">
+      <Filter>Source Files\Cube</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
