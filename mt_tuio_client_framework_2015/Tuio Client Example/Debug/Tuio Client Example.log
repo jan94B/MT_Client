@@ -2,11 +2,12 @@
 c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(51): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(110): warning C4018: '<': signed/unsigned mismatch
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(184): warning C4018: '<': signed/unsigned mismatch
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(191): warning C4018: '<': signed/unsigned mismatch
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(224): warning C4018: '<': signed/unsigned mismatch
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(367): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(368): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(411): warning C4101: 'threadID': unreferenced local variable
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(186): warning C4018: '<': signed/unsigned mismatch
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(196): warning C4018: '<': signed/unsigned mismatch
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(203): warning C4018: '<': signed/unsigned mismatch
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(236): warning C4018: '<': signed/unsigned mismatch
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(379): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(380): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\jaann\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(423): warning C4101: 'threadID': unreferenced local variable
   Tuio Client Example.vcxproj -> C:\Users\jaann\Documents\GitHub\MT_Client\mt_tuio_client_framework_2015\Debug\Tuio Client Example.exe
   Tuio Client Example.vcxproj -> C:\Users\jaann\Documents\GitHub\MT_Client\mt_tuio_client_framework_2015\Debug\Tuio Client Example.pdb (Partial PDB)

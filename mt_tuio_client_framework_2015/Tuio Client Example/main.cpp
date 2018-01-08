@@ -46,6 +46,7 @@ GLfloat quadVertices[] = {  -0.5, -0.5, 0, // bottom left corner
 
 GeometricRecognizer Gr;
 
+//translate the X coordinats from Tracking to Client
 float translateXcoords(float x) {
 	if (x > 0.5) {
 		x = (x - 0.5) * 2;
@@ -59,6 +60,7 @@ float translateXcoords(float x) {
 	return x;
 }
 
+//translate the Y coordinats from Tracking to Client
 float translateYcoords(float y) {
 	if (y > 0.5) {
 		y = (y - 0.5) * -2;
@@ -88,6 +90,7 @@ class Client : public TuioListener {
 	
 	void Client::addTuioCursor(TuioCursor *tcur)
 	{
+
 		if (quadDetection(translateXcoords((tcur)->getX()), translateYcoords((tcur)->getY()))) {
 			detectedFingersInQuad.push_back(*tcur);
 		}
@@ -144,8 +147,10 @@ class Client : public TuioListener {
 
 
 				if (detectedFingersInQuad.size() == 2) {//rotate the Quad NOt READY AT THE MOMENT
+					/*Funktioniert noch nicht
 					quadRotateAngle = detectedFingersInQuad.at(0).getAngleDegrees(detectedFingersInQuad.at(1).getX(), detectedFingersInQuad.at(1).getY());
-
+					cout << quadRotateAngle << "\n";
+					RotateQuad(90);*/
 				}
 
 
@@ -179,6 +184,16 @@ class Client : public TuioListener {
 
 		
 	};
+
+	void RotateQuad(float quadRotateAngle) {
+		for (int i = 0; i < quadPoints.size(); i++) {
+			quadPoints.at(i).x = quadPoints.at(i).x * cos(quadRotateAngle) + quadPoints.at(i).y * (-sin(quadRotateAngle));
+			quadPoints.at(i).y = quadPoints.at(i).y * (sin(quadRotateAngle)) + quadPoints.at(i).y * (cos(quadRotateAngle));
+		}
+
+
+	}
+
 
 	void scaleQuad(float scaleValue) {
 		for (int i = 0; i < quadPoints.size(); i++) {
@@ -319,7 +334,7 @@ void draw() {
 	}
 	glLineWidth(lineWidth);
 
-	/*
+	/*Zeichnen Auskommentiert, da immer wieder Fehler bei getPath kommt
 	for (std::list<TuioCursor*>::iterator cursorListIter = cursorList.begin(); cursorListIter != cursorList.end(); ++cursorListIter) {
 	
 		
