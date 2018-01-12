@@ -6,6 +6,7 @@
 #include "../Recognizer/GeometricRecognizer.h"
 #include "../Cube/Wuerfel.h"
 #include <list>
+#include <math.h>
 
 
 #include <GL/glut.h>
@@ -31,10 +32,10 @@ float fingerDistanceByQuad;
 vector<TuioCursor> detectedFingersInQuad;
 
 
-vector<Point2D> quadPoints{ { -0.3, -0.3 },// bottom left corner
-							{ -0.3, 0.3 },// top left corner
-							{ 0.3, 0.3 }, // top right corner
-							{ 0.3, -0.3 } };// bottom right corner
+vector<Point2D> quadPoints{ { -0.3, -0.6 },// bottom left corner
+							{ -0.3, 0.6 },// top left corner //TODO
+							{ 0.3, 0.6 }, // top right corner
+							{ 0.3, -0.6 } };// bottom right corner
 
 
 GLfloat quadVertices[] = {  -0.5, -0.5, 0, // bottom left corner
@@ -122,9 +123,10 @@ class Client : public TuioListener {
 				if (fingerDetectedInQuad && detectedFingersInQuad.size() == 1) { //Move the quad
 						//cout << "finger is detected and updated\n";
 					moveQuad(translateXcoords((tcur)->getX()) - translateXcoords(detectedFingersInQuad.at(indexOfTheDetectedFinger).getX()), translateYcoords((tcur)->getY()) - translateYcoords(detectedFingersInQuad.at(indexOfTheDetectedFinger).getY()));
+					cout << "translation" << endl;
 				}
 
-
+				
 
 				if (detectedFingersInQuad.size() == 2) {//Scale the Quad
 					cout << "2 Finger Detected";
@@ -139,8 +141,11 @@ class Client : public TuioListener {
 					}
 
 					if (newDistance - oldDistance != 0) {
-						scaleQuad(newDistance - oldDistance);
+						//scaleQuad(newDistance - oldDistance);
 						//scaleQuadValue = newDistance - oldDistance;
+						cout << "\nexecute rotation\n";
+						cout << "PI: " << M_PI;
+						RotateQuad(M_PI*0.1);
 					}
 					
 				}
@@ -186,12 +191,44 @@ class Client : public TuioListener {
 	};
 
 	void RotateQuad(float quadRotateAngle) {
+
+		// 1. Mittelpunkt berechnen
+		// 2. Wie weit ist der Körper vom Mittelpunkt entfernt? -> alle 4 Koord entsprechend verschieben
+
+		double midpointX = 0;
+		double midpointY = 0;
+
 		for (int i = 0; i < quadPoints.size(); i++) {
-			quadPoints.at(i).x = quadPoints.at(i).x * cos(quadRotateAngle) + quadPoints.at(i).y * (-sin(quadRotateAngle));
-			quadPoints.at(i).y = quadPoints.at(i).y * (sin(quadRotateAngle)) + quadPoints.at(i).y * (cos(quadRotateAngle));
+			midpointX += quadPoints.at(i).x;
+			midpointY += quadPoints.at(i).y;
 		}
 
+		midpointX /= 4;
+		midpointY /= 4;
 
+		// Translation aller Eckpunkte um M
+		for (int i = 0; i < quadPoints.size(); i++) {
+			quadPoints.at(i).x -= midpointX; 
+			quadPoints.at(i).y -= midpointY;
+		}
+
+		for (int i = 0; i < quadPoints.size(); i++) {
+			////neu
+			double oldx = quadPoints.at(i).x;
+			quadPoints.at(i).x = (quadPoints.at(i).x * cos(quadRotateAngle)) - quadPoints.at(i).y * sin(quadRotateAngle) ;
+			quadPoints.at(i).y = oldx * (sin(quadRotateAngle)) + quadPoints.at(i).y * (cos(quadRotateAngle));
+
+			//90° nur
+			/*double tmp = quadPoints.at(i).x;
+			quadPoints.at(i).x = quadPoints.at(i).y * (-1);
+			quadPoints.at(i).y = tmp;*/
+
+		}
+		// Translation wieder zurück
+		for (int i = 0; i < quadPoints.size(); i++) {
+			quadPoints.at(i).x += midpointX;
+			quadPoints.at(i).y += midpointY;
+		}
 	}
 
 
@@ -312,6 +349,23 @@ void draw() {
 		glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer (background)
 		firstDraw = false;
 	}
+
+	//gluLookAt(0., 0., 1., 0., 0., 0., 0., 1., 0.);
+
+	//Koord system
+	glBegin(GL_LINES);   //Vorderseite
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f); //ROT x
+	glVertex3f(-100.0, 0.0, 0.0);
+	glVertex3f(100.0, 0.0, 0.0);
+	glColor4f(0.0f, 1.0f, 0.0f, 1.0f); //GRUEN y
+	glVertex3f(0.0, -100.0, 0.0);
+	glVertex3f(0.0, 100.0, 0.0);
+	glColor4f(0.0f, 0.0f, 1.0f, 1.0f); //BLAU z
+	glVertex3f(0.0, 0.0, -100.0);
+	glVertex3f(0.0, 0.0, 100.0);
+	glEnd();
+	// Koord system
+
 	// openGL draw function
 	std::list<TuioCursor*> cursorList;
 
