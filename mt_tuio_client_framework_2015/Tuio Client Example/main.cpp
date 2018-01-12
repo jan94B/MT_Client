@@ -1,4 +1,4 @@
-#include <iostream>
+ #include <iostream>
 #include <process.h>
 
 #include "TuioClient.h"
@@ -24,7 +24,7 @@ float lineWidth = 6.5;			//define width of the lines
 bool cleanWindow = true;		//clean the window if it true in the draw method
 bool drawCircle = false;
 bool drawQuad = true;
-float quadRotateAngle = 0;
+float quadRotateAngle = -1;
 float scaleQuadValue = 0;
 float quadMoveX = 0;
 float quadMoveY = 0;
@@ -75,6 +75,10 @@ float translateYcoords(float y) {
 	return y;
 }
 
+double Distance(double dX0, double dY0, double dX1, double dY1)
+{
+	return sqrt((dX1 - dX0)*(dX1 - dX0) + (dY1 - dY0)*(dY1 - dY0));
+}
 
 class Client : public TuioListener {
 	// these methods need to be implemented here since they're virtual methods
@@ -120,6 +124,8 @@ class Client : public TuioListener {
 
 			if (fingerDetectedInQuad) {
 
+			
+
 				if (fingerDetectedInQuad && detectedFingersInQuad.size() == 1) { //Move the quad
 						//cout << "finger is detected and updated\n";
 					moveQuad(translateXcoords((tcur)->getX()) - translateXcoords(detectedFingersInQuad.at(indexOfTheDetectedFinger).getX()), translateYcoords((tcur)->getY()) - translateYcoords(detectedFingersInQuad.at(indexOfTheDetectedFinger).getY()));
@@ -127,7 +133,7 @@ class Client : public TuioListener {
 				}
 
 				
-
+				
 				if (detectedFingersInQuad.size() == 2) {//Scale the Quad
 					cout << "2 Finger Detected";
 					float newDistance = 0;
@@ -141,30 +147,35 @@ class Client : public TuioListener {
 					}
 
 					if (newDistance - oldDistance != 0) {
-						//scaleQuad(newDistance - oldDistance);
+						scaleQuad(newDistance - oldDistance);
 						//scaleQuadValue = newDistance - oldDistance;
-						cout << "\nexecute rotation\n";
-						cout << "PI: " << M_PI;
-						RotateQuad(M_PI*0.1);
+						//cout << "\nexecute rotation\n";
+						//cout << "PI: " << M_PI;
+						//RotateQuad(M_PI*0.1);
 					}
 					
 				}
 
 
-				if (detectedFingersInQuad.size() == 2) {//rotate the Quad NOt READY AT THE MOMENT
-					/*Funktioniert noch nicht
-					quadRotateAngle = detectedFingersInQuad.at(0).getAngleDegrees(detectedFingersInQuad.at(1).getX(), detectedFingersInQuad.at(1).getY());
-					cout << quadRotateAngle << "\n";
-					RotateQuad(90);*/
+			
+
+				if (detectedFingersInQuad.size() == 2) {//rotate the Quad
+					double newQuadRotateAngle = 0;
+
+					if (quadRotateAngle == -1) {
+						quadRotateAngle = detectedFingersInQuad.at(0).getAngleDegrees(detectedFingersInQuad.at(1).getX(), detectedFingersInQuad.at(1).getY());
+					}
+					else {
+						newQuadRotateAngle = detectedFingersInQuad.at(0).getAngleDegrees(detectedFingersInQuad.at(1).getX(), detectedFingersInQuad.at(1).getY());
+
+						if (newQuadRotateAngle - quadRotateAngle > 2 || newQuadRotateAngle - quadRotateAngle < -2) {
+							cout << "rotate :" << newQuadRotateAngle - quadRotateAngle << "\n";
+							RotateQuad((newQuadRotateAngle - quadRotateAngle) * 0.1);
+							quadRotateAngle = newQuadRotateAngle;
+						}
+					}
+
 				}
-
-
-
-
-
-
-
-
 
 
 
@@ -247,8 +258,28 @@ class Client : public TuioListener {
 	}
 
 	bool quadDetection(float x, float y) {
+
+
 		if (drawQuad) {
-			if (x > quadPoints.at(0).x && x < quadPoints.at(3).x && y > quadPoints.at(0).y && y < quadPoints.at(1).y) {
+
+			double midpointX = 0;
+			double midpointY = 0;
+
+			for (int i = 0; i < quadPoints.size(); i++) {
+				midpointX += quadPoints.at(i).x;
+				midpointY += quadPoints.at(i).y;
+			}
+
+			midpointX /= 4;
+			midpointY /= 4;
+
+			double pointD;
+			double quadDistance;
+
+			pointD = Distance(midpointX, midpointY, x, y);
+			quadDistance = Distance(midpointX, midpointY, quadPoints.at(0).x, quadPoints.at(0).y);
+			
+			if (pointD < quadDistance) {
 				cout << "in quad";
 				return true;
 			}
@@ -257,6 +288,17 @@ class Client : public TuioListener {
 				return false;
 			}
 		}
+
+			/*
+			if (x > quadPoints.at(0).x && x < quadPoints.at(2).x && y > quadPoints.at(0).y && y < quadPoints.at(2).y || x > quadPoints.at(1).x && x < quadPoints.at(3).x && y > quadPoints.at(1).y && y < quadPoints.at(3).y) {
+				cout << "in quad";
+				return true;
+			}
+			else {
+				//cout << " not in quad";
+				return false;
+			}
+		}*/
 
 		return false;
 	}
@@ -276,6 +318,7 @@ class Client : public TuioListener {
 		for (int i = 0; i < detectedFingersInQuad.size(); i++) {//Erase the detectetCursor in the quad vector
 			if (detectedFingersInQuad.at(i).getSessionID() == (tcur)->getSessionID()) {
 				detectedFingersInQuad.erase(detectedFingersInQuad.begin() + i);
+				quadRotateAngle = -1;
 			}
 		}
 
@@ -388,7 +431,7 @@ void draw() {
 	}
 	glLineWidth(lineWidth);
 
-	/*Zeichnen Auskommentiert, da immer wieder Fehler bei getPath kommt
+	//Zeichnen Auskommentiert, da immer wieder Fehler bei getPath kommt
 	for (std::list<TuioCursor*>::iterator cursorListIter = cursorList.begin(); cursorListIter != cursorList.end(); ++cursorListIter) {
 	
 		
@@ -402,7 +445,7 @@ void draw() {
 		}
 		glEnd();
 		
-	}*/
+	}
 
 	
 		if (drawQuad) {
