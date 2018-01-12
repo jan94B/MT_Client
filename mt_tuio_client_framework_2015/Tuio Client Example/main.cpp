@@ -29,6 +29,8 @@ float scaleQuadValue = 0;
 float quadMoveX = 0;
 float quadMoveY = 0;
 float fingerDistanceByQuad;
+
+
 vector<TuioCursor> detectedFingersInQuad;
 
 
@@ -36,6 +38,9 @@ vector<Point2D> quadPoints{ { -0.3, -0.6 },// bottom left corner
 							{ -0.3, 0.6 },// top left corner //TODO
 							{ 0.3, 0.6 }, // top right corner
 							{ 0.3, -0.6 } };// bottom right corner
+
+
+vector<float> colorVector{ 0.0,1.0,0.0 };//red, green, blue
 
 
 GLfloat quadVertices[] = {  -0.5, -0.5, 0, // bottom left corner
@@ -304,7 +309,7 @@ class Client : public TuioListener {
 	}
 	
 
-
+	int colorSwitch = 0;
 	void Client::removeTuioCursor(TuioCursor *tcur){
 		Gr.loadTemplates();
 		//std::cout << "remove finger detected: (id=" << tcur->getSessionID() << ", coordinates=" << tcur->getX() << "," << tcur->getY() << ")\n";
@@ -362,12 +367,33 @@ class Client : public TuioListener {
 					}
 					
 
-					if (rResult.name == "V" && lineWidth == 6.5) {
-						lineWidth = 2;
+					if (rResult.name == "V" && detectedFingersInQuad.size() > 0) {
+
+						switch (colorSwitch) {
+						case 0: 						
+							colorVector.at(0) = 1;
+							colorVector.at(1) = 0;
+							colorVector.at(2) = 0;
+							colorSwitch++;
+							break;
+						case 1:
+							colorVector.at(0) = 0;
+							colorVector.at(1) = 0;
+							colorVector.at(2) = 1;
+							colorSwitch++;
+							break;
+						case 2:
+							colorVector.at(0) = 0;
+							colorVector.at(1) = 1;
+							colorVector.at(2) = 0;
+							colorSwitch = 0;
+							break;
+						}
+					
+						colorVector[0] = 1;
+
 					}
-					else if (rResult.name == "V" && lineWidth == 2) {
-						lineWidth = 6.5;
-					}
+					
 
 				
 				}
@@ -395,19 +421,6 @@ void draw() {
 
 	//gluLookAt(0., 0., 1., 0., 0., 0., 0., 1., 0.);
 
-	//Koord system
-	glBegin(GL_LINES);   //Vorderseite
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f); //ROT x
-	glVertex3f(-100.0, 0.0, 0.0);
-	glVertex3f(100.0, 0.0, 0.0);
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f); //GRUEN y
-	glVertex3f(0.0, -100.0, 0.0);
-	glVertex3f(0.0, 100.0, 0.0);
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f); //BLAU z
-	glVertex3f(0.0, 0.0, -100.0);
-	glVertex3f(0.0, 0.0, 100.0);
-	glEnd();
-	// Koord system
 
 	// openGL draw function
 	std::list<TuioCursor*> cursorList;
@@ -431,7 +444,7 @@ void draw() {
 	}
 	glLineWidth(lineWidth);
 
-	//Zeichnen Auskommentiert, da immer wieder Fehler bei getPath kommt
+	/*//Zeichnen Auskommentiert, da immer wieder Fehler bei getPath kommt
 	for (std::list<TuioCursor*>::iterator cursorListIter = cursorList.begin(); cursorListIter != cursorList.end(); ++cursorListIter) {
 	
 		
@@ -445,12 +458,12 @@ void draw() {
 		}
 		glEnd();
 		
-	}
+	}*/
 
 	
 		if (drawQuad) {
 			glPushMatrix();			
-			glColor3f(0.0f, 1.0f, 0.0f);
+			glColor3f(colorVector.at(0), colorVector.at(1), colorVector.at(2));
 
 			glBegin(GL_QUADS);
 			glVertex2d(quadPoints.at(0).x, quadPoints.at(0).y);
@@ -465,10 +478,21 @@ void draw() {
 			
 		}
 
-
-
-
-		//glVertexPointer(3, GL_FLOAT, 0, quadVertices);
+		/*
+		//Koord system
+		glBegin(GL_LINES);   //Vorderseite
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f); //ROT x
+		glVertex3f(-100.0, 0.0, 0.0);
+		glVertex3f(100.0, 0.0, 0.0);
+		glColor4f(0.0f, 1.0f, 0.0f, 1.0f); //GRUEN y
+		glVertex3f(0.0, -100.0, 0.0);
+		glVertex3f(0.0, 100.0, 0.0);
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f); //BLAU z
+		glVertex3f(0.0, 0.0, -100.0);
+		glVertex3f(0.0, 0.0, 100.0);
+		glEnd();
+		// Koord system
+		*/
 
 
 
