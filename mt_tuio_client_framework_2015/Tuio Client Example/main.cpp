@@ -9,6 +9,8 @@
 #include <math.h>
 
 
+
+
 #include <GL/glut.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
@@ -22,16 +24,20 @@ using namespace DollarRecognizer;
 TUIO::TuioClient *tuioClient; // global tuioClient for testing
 float lineWidth = 6.5;			//define width of the lines
 bool cleanWindow = true;		//clean the window if it true in the draw method
-bool drawCircle = false;
-bool drawQuad = true;
+
+bool drawQuad = false;
 float quadRotateAngle = -1;
 float scaleQuadValue = 0;
 float quadMoveX = 0;
 float quadMoveY = 0;
 float fingerDistanceByQuad;
 
+bool drawCircle = true;
+float circleRadius = 0.3;
+Point2D circlePosition { 0, 0 };
 
 vector<TuioCursor> detectedFingersInQuad;
+vector<TuioCursor> detectedFingersInCircle;
 
 
 vector<Point2D> quadPoints{ { -0.3, -0.6 },// bottom left corner
@@ -40,14 +46,8 @@ vector<Point2D> quadPoints{ { -0.3, -0.6 },// bottom left corner
 							{ 0.3, -0.6 } };// bottom right corner
 
 
-vector<float> colorVector{ 0.0,1.0,0.0 };//red, green, blue
-
-
-GLfloat quadVertices[] = {  -0.5, -0.5, 0, // bottom left corner
-							-0.5,  0.5, 0, // top left corner
-							 0.5,  0.5, 0, // top right corner
-							 0.5, -0.5, 0 }; // bottom right corner
-
+vector<float> colorVectorQuad{ 0.0,1.0,0.0 };//red, green, blue
+vector<float> colorVectorCircle{ 0.0,1.0,0.0 };//red, green, blue
 
 
 GeometricRecognizer Gr;
@@ -85,13 +85,13 @@ double Distance(double dX0, double dY0, double dX1, double dY1)
 	return sqrt((dX1 - dX0)*(dX1 - dX0) + (dY1 - dY0)*(dY1 - dY0));
 }
 
+
 class Client : public TuioListener {
 	// these methods need to be implemented here since they're virtual methods
 	// these methods will be called whenever a new package is received
 	
 
 
-	
 
 
 	void Client::addTuioObject(TuioObject *tobj){};
@@ -104,14 +104,67 @@ class Client : public TuioListener {
 		if (quadDetection(translateXcoords((tcur)->getX()), translateYcoords((tcur)->getY()))) {
 			detectedFingersInQuad.push_back(*tcur);
 		}
-		
+		else if (circleDetection(translateXcoords((tcur)->getX()), translateYcoords((tcur)->getY()))) {
+			cout << "circle Detected";
+			detectedFingersInCircle.push_back(*tcur);
+		}
+
 	
 		
 		//std::cout << "new finger detected: (id=" << tcur->getSessionID() << ", coordinates=" << tcur->getX() << "," << tcur->getY() << ")\n";
 	};
+
+
+
 	void Client::updateTuioCursor(TuioCursor *tcur){
 		//std::cout << "update finger detected: (id=" << tcur->getSessionID() << ", coordinates=" << tcur->getX() << "," << tcur->getY() << ")\n";
 		
+
+
+		if (drawCircle && detectedFingersInCircle.size() > 0) {
+			bool fingerDetectedInCircle = false;
+			int indexOfTheDetectedFingerCircle;
+
+			for (int i = 0; i < detectedFingersInCircle.size(); i++) {
+				if (detectedFingersInCircle.at(i).getSessionID() == (tcur)->getSessionID()) {
+					fingerDetectedInCircle = true;
+					indexOfTheDetectedFingerCircle = i;
+				}
+			}
+
+
+			if (fingerDetectedInCircle) {
+				if (fingerDetectedInCircle && detectedFingersInCircle.size() == 1) { //Move the Circle
+					circlePosition.x = translateXcoords((tcur)->getX());
+					circlePosition.y = translateYcoords((tcur)->getY());
+					//cout << "translation" << endl;
+				}
+
+
+
+
+
+				if (detectedFingersInCircle.size() == 2) {//Scale circle
+					//cout << "2 Finger Detected";
+					float newDistance = 0;
+					float oldDistance = detectedFingersInCircle.at(0).getDistance(detectedFingersInCircle.at(1).getX(), detectedFingersInCircle.at(1).getY());
+
+					if (indexOfTheDetectedFingerCircle == 0) {
+						newDistance = detectedFingersInCircle.at(1).getDistance((tcur)->getX(), (tcur)->getY());
+					}
+					else {
+						newDistance = detectedFingersInCircle.at(0).getDistance((tcur)->getX(), (tcur)->getY());
+					} 
+					if (newDistance - oldDistance != 0) {
+						circleRadius += (newDistance - oldDistance) * 5;
+					}
+				}
+				detectedFingersInCircle.at(indexOfTheDetectedFingerCircle) = (tcur);
+			}
+		}
+		
+
+
 		if (drawQuad && detectedFingersInQuad.size() > 0 && detectedFingersInQuad.size() < 3) {
 			fingerDistanceByQuad = 0;
 			bool fingerDetectedInQuad = false;
@@ -127,20 +180,18 @@ class Client : public TuioListener {
 				}
 			}
 
+
+
 			if (fingerDetectedInQuad) {
-
-			
-
 				if (fingerDetectedInQuad && detectedFingersInQuad.size() == 1) { //Move the quad
-						//cout << "finger is detected and updated\n";
 					moveQuad(translateXcoords((tcur)->getX()) - translateXcoords(detectedFingersInQuad.at(indexOfTheDetectedFinger).getX()), translateYcoords((tcur)->getY()) - translateYcoords(detectedFingersInQuad.at(indexOfTheDetectedFinger).getY()));
-					cout << "translation" << endl;
+					//cout << "translation" << endl;
 				}
 
 				
 				
 				if (detectedFingersInQuad.size() == 2) {//Scale the Quad
-					cout << "2 Finger Detected";
+					//cout << "2 Finger Detected";
 					float newDistance = 0;
 					float oldDistance = detectedFingersInQuad.at(0).getDistance(detectedFingersInQuad.at(1).getX(), detectedFingersInQuad.at(1).getY());
 
@@ -152,11 +203,7 @@ class Client : public TuioListener {
 					}
 
 					if (newDistance - oldDistance != 0) {
-						scaleQuad(newDistance - oldDistance);
-						//scaleQuadValue = newDistance - oldDistance;
-						//cout << "\nexecute rotation\n";
-						//cout << "PI: " << M_PI;
-						//RotateQuad(M_PI*0.1);
+						scaleQuad(newDistance - oldDistance);					
 					}
 					
 				}
@@ -182,29 +229,19 @@ class Client : public TuioListener {
 
 				}
 
+				detectedFingersInQuad.at(indexOfTheDetectedFinger) = (tcur);//update the vector detectedFingersInQuad with the new Finger
 
-
-				detectedFingersInQuad.at(indexOfTheDetectedFinger) = (tcur);
-
-
-
-			}
-
-		
-				
+			}	
 		}
 			
 			
-		
-	
-
-
 			//list<TuioPoint>::iterator it = (tcur)->getPath().begin();		<<<<< Fehler !!!!!!
 			//++it;
 			//cout << (*it).getX() << " New: " << (tcur)->getX() << "\n";
 
 		
 	};
+	
 
 	void RotateQuad(float quadRotateAngle) {
 
@@ -234,10 +271,6 @@ class Client : public TuioListener {
 			quadPoints.at(i).x = (quadPoints.at(i).x * cos(quadRotateAngle)) - quadPoints.at(i).y * sin(quadRotateAngle) ;
 			quadPoints.at(i).y = oldx * (sin(quadRotateAngle)) + quadPoints.at(i).y * (cos(quadRotateAngle));
 
-			//90° nur
-			/*double tmp = quadPoints.at(i).x;
-			quadPoints.at(i).x = quadPoints.at(i).y * (-1);
-			quadPoints.at(i).y = tmp;*/
 
 		}
 		// Translation wieder zurück
@@ -255,6 +288,7 @@ class Client : public TuioListener {
 		}
 	}
 
+
 	void moveQuad(float xDifference, float yDifference) {
 		for (int i = 0; i < quadPoints.size(); i++) {
 			quadPoints.at(i).x = quadPoints.at(i).x + xDifference;
@@ -262,6 +296,17 @@ class Client : public TuioListener {
 		}
 	}
 
+	bool circleDetection(float x, float y) {
+
+		if (circleRadius >= Distance(circlePosition.x, circlePosition.y, x, y)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	//Check if the point in the quad
 	bool quadDetection(float x, float y) {
 
 
@@ -285,7 +330,7 @@ class Client : public TuioListener {
 			quadDistance = Distance(midpointX, midpointY, quadPoints.at(0).x, quadPoints.at(0).y);
 			
 			if (pointD < quadDistance) {
-				cout << "in quad";
+				//cout << "in quad";
 				return true;
 			}
 			else {
@@ -294,22 +339,13 @@ class Client : public TuioListener {
 			}
 		}
 
-			/*
-			if (x > quadPoints.at(0).x && x < quadPoints.at(2).x && y > quadPoints.at(0).y && y < quadPoints.at(2).y || x > quadPoints.at(1).x && x < quadPoints.at(3).x && y > quadPoints.at(1).y && y < quadPoints.at(3).y) {
-				cout << "in quad";
-				return true;
-			}
-			else {
-				//cout << " not in quad";
-				return false;
-			}
-		}*/
-
 		return false;
 	}
 	
 
-	int colorSwitch = 0;
+	int colorSwitchQuad = 0;
+	int colorSwitchCircle = 0;
+
 	void Client::removeTuioCursor(TuioCursor *tcur){
 		Gr.loadTemplates();
 		//std::cout << "remove finger detected: (id=" << tcur->getSessionID() << ", coordinates=" << tcur->getX() << "," << tcur->getY() << ")\n";
@@ -323,12 +359,18 @@ class Client : public TuioListener {
 		for (int i = 0; i < detectedFingersInQuad.size(); i++) {//Erase the detectetCursor in the quad vector
 			if (detectedFingersInQuad.at(i).getSessionID() == (tcur)->getSessionID()) {
 				detectedFingersInQuad.erase(detectedFingersInQuad.begin() + i);
-				quadRotateAngle = -1;
+				quadRotateAngle = -1;//Reset the old rotate angle
+			}
+		}
+
+		for (int i = 0; i < detectedFingersInCircle.size(); i++) {//Erase the detectetCursor in the quad vector
+			if (detectedFingersInCircle.at(i).getSessionID() == (tcur)->getSessionID()) {
+				detectedFingersInCircle.erase(detectedFingersInCircle.begin() + i);
 			}
 		}
 
 
-
+		//tranform the TUIO points to Point2D
 		tuioList = (tcur)->getPath();
 		for (int i = 0; !tuioList.empty(); i++) {
 			point.x = tuioList.front().getX();
@@ -347,10 +389,16 @@ class Client : public TuioListener {
 
 				if (rResult.score > 0.75) { //check if score high enough
 
-					cout << "Result Name: " << rResult.name;
+					cout << "Result Name: " << rResult.name << " score" << rResult.score;
 
 					if (rResult.name == "Circle") {
-						drawCircle = true;
+						if (drawCircle) {
+							drawCircle = false;
+							detectedFingersInCircle.clear();
+						}
+						else {
+							drawCircle = true;
+						}
 					}
 
 					if (rResult.name == "Delete") {
@@ -360,6 +408,7 @@ class Client : public TuioListener {
 					if (rResult.name == "Rectangle") {
 						if (drawQuad) {
 							drawQuad = false;
+							detectedFingersInQuad.clear();
 						}
 						else {
 							drawQuad = true;
@@ -369,30 +418,55 @@ class Client : public TuioListener {
 
 					if (rResult.name == "V" && detectedFingersInQuad.size() > 0) {
 
-						switch (colorSwitch) {
-						case 0: 						
-							colorVector.at(0) = 1;
-							colorVector.at(1) = 0;
-							colorVector.at(2) = 0;
-							colorSwitch++;
+						switch (colorSwitchQuad) {
+						case 0:
+							colorVectorQuad.at(0) = 1;
+							colorVectorQuad.at(1) = 0;
+							colorVectorQuad.at(2) = 0;
+							colorSwitchQuad++;
 							break;
 						case 1:
-							colorVector.at(0) = 0;
-							colorVector.at(1) = 0;
-							colorVector.at(2) = 1;
-							colorSwitch++;
+							colorVectorQuad.at(0) = 0;
+							colorVectorQuad.at(1) = 0;
+							colorVectorQuad.at(2) = 1;
+							colorSwitchQuad++;
 							break;
 						case 2:
-							colorVector.at(0) = 0;
-							colorVector.at(1) = 1;
-							colorVector.at(2) = 0;
-							colorSwitch = 0;
+							colorVectorQuad.at(0) = 0;
+							colorVectorQuad.at(1) = 1;
+							colorVectorQuad.at(2) = 0;
+							colorSwitchQuad = 0;
 							break;
 						}
-					
-						colorVector[0] = 1;
 
+						colorVectorQuad[0] = 1;
 					}
+
+
+						if (rResult.name == "V" && detectedFingersInCircle.size() > 0) {
+
+							switch (colorSwitchCircle) {
+							case 0:
+								colorVectorCircle.at(0) = 1;
+								colorVectorCircle.at(1) = 0;
+								colorVectorCircle.at(2) = 0;
+								colorSwitchCircle++;
+								break;
+							case 1:
+								colorVectorCircle.at(0) = 0;
+								colorVectorCircle.at(1) = 0;
+								colorVectorCircle.at(2) = 1;
+								colorSwitchCircle++;
+								break;
+							case 2:
+								colorVectorCircle.at(0) = 0;
+								colorVectorCircle.at(1) = 1;
+								colorVectorCircle.at(2) = 0;
+								colorSwitchCircle = 0;
+								break;
+							}
+						}
+					
 					
 
 				
@@ -412,14 +486,12 @@ class Client : public TuioListener {
 
 bool firstDraw = true;
 void draw() {
-	
+
 	if (firstDraw) {
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set background color to black and opaque
 		glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer (background)
 		firstDraw = false;
 	}
-
-	//gluLookAt(0., 0., 1., 0., 0., 0., 0., 1., 0.);
 
 
 	// openGL draw function
@@ -449,7 +521,7 @@ void draw() {
 	
 		
 		tuioList = (*cursorListIter)->getPath();
-		
+		glPushMatrix();
 		glBegin(GL_LINE_STRIP);
 		glColor3f(0.0f, 0.0f, 1.0f);
 		for (int i = 0; !tuioList.empty(); i++) {	
@@ -457,13 +529,14 @@ void draw() {
 			tuioList.pop_front();
 		}
 		glEnd();
-		
+		glPopMatrix();
+
 	}*/
 
 	
 		if (drawQuad) {
 			glPushMatrix();			
-			glColor3f(colorVector.at(0), colorVector.at(1), colorVector.at(2));
+			glColor3f(colorVectorQuad.at(0), colorVectorQuad.at(1), colorVectorQuad.at(2));
 
 			glBegin(GL_QUADS);
 			glVertex2d(quadPoints.at(0).x, quadPoints.at(0).y);
@@ -477,6 +550,23 @@ void draw() {
 
 			
 		}
+
+
+		if (drawCircle) {
+			glPushMatrix();
+			glColor3f(colorVectorCircle.at(0), colorVectorCircle.at(1), colorVectorCircle.at(2));
+			glBegin(GL_TRIANGLE_FAN);
+			for (int i = 0; i <= 300; i++) {
+				double angle = 2 * M_PI * i / 300;
+				double x = cos(angle) * circleRadius + circlePosition.x;
+				double y = sin(angle) * circleRadius + circlePosition.y;
+				glVertex2d(x, y);
+			}
+			glEnd();
+			glPopMatrix();
+
+		}
+
 
 		/*
 		//Koord system
@@ -548,7 +638,6 @@ int main(int argc, char** argv)
 	//hThread = (HANDLE)_beginthreadex( NULL, 0, &tuioThread, NULL, 0, &threadID );
 	hThread_TUIO = (HANDLE)_beginthread( tuioThread, 0, NULL );
 
-
 	
 	glutInit(&argc, argv);                 // Initialize GLUT
 	glutCreateWindow("OpenGL Setup Test"); // Create a window with the given title
@@ -566,20 +655,5 @@ int main(int argc, char** argv)
 	glutMainLoop();
 	
 
-	/*
-	// GLUT Window Initialization (just an example):
-	glutInit(&argc, argv);
-	glutInitWindowSize(752, 480);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutCreateWindow("TUIO Client Example (GLUT Window)");
-
-	// openGL init
-	glInit();
-
-	// Register callbacks:
-	glutDisplayFunc(draw);
-	glutIdleFunc(idle);
-	glutMainLoop();
-	*/
 	return 0;
 }
