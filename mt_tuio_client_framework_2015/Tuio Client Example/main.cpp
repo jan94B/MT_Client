@@ -188,6 +188,26 @@ class Client : public TuioListener {
 					//cout << "translation" << endl;
 				}
 
+				if (fingerDetectedInQuad && detectedFingersInQuad.size() == 2) { //Move the quad (two fingers)
+					// get X and Y of both and interpolate
+					float oldMidX = (translateXcoords(detectedFingersInQuad.at(0).getX())+ translateXcoords(detectedFingersInQuad.at(1).getX())) /2 ;
+					float oldMidY = (translateYcoords(detectedFingersInQuad.at(0).getY()) + translateYcoords(detectedFingersInQuad.at(1).getY())) / 2;
+					float newMidX = 0;
+					float newMidY = 0;
+
+
+					if (indexOfTheDetectedFinger == 0) {
+						newMidX = (translateXcoords((tcur)->getX()) + translateXcoords(detectedFingersInQuad.at(1).getX())) /2;
+						newMidY = (translateYcoords((tcur)->getY()) + translateYcoords(detectedFingersInQuad.at(1).getY())) / 2;
+					}
+					else {
+						newMidX = (translateXcoords((tcur)->getX()) + translateXcoords(detectedFingersInQuad.at(0).getX())) /2;
+						newMidY = (translateYcoords((tcur)->getY()) + translateYcoords(detectedFingersInQuad.at(0).getY())) /2;
+					}
+					moveQuad(newMidX - oldMidX, newMidY- oldMidY);
+					cout << "translation two fingers" << endl;
+				}
+
 				
 				
 				if (detectedFingersInQuad.size() == 2) {//Scale the Quad
