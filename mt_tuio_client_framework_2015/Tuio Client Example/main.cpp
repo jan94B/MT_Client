@@ -41,7 +41,7 @@ vector<TuioCursor> detectedFingersInCircle;
 
 
 vector<Point2D> quadPoints{ { -0.3, -0.6 },// bottom left corner
-							{ -0.3, 0.6 },// top left corner //TODO
+							{ -0.3, 0.6 },// top left corner 
 							{ 0.3, 0.6 }, // top right corner
 							{ 0.3, -0.6 } };// bottom right corner
 
@@ -134,13 +134,35 @@ class Client : public TuioListener {
 
 
 			if (fingerDetectedInCircle) {
+
 				if (fingerDetectedInCircle && detectedFingersInCircle.size() == 1) { //Move the Circle
-					circlePosition.x = translateXcoords((tcur)->getX());
-					circlePosition.y = translateYcoords((tcur)->getY());
+					circlePosition.x = circlePosition.x + translateXcoords((tcur)->getX()) - translateXcoords(detectedFingersInCircle.at(indexOfTheDetectedFingerCircle).getX());
+					circlePosition.y = circlePosition.y + translateYcoords((tcur)->getY()) - translateYcoords(detectedFingersInCircle.at(indexOfTheDetectedFingerCircle).getY());;
 					//cout << "translation" << endl;
 				}
 
+				if (fingerDetectedInCircle && detectedFingersInCircle.size() == 2) { //Move the circle (two fingers)
+																				 // get X and Y of both and interpolate
+					float oldMidX = (translateXcoords(detectedFingersInCircle.at(0).getX()) + translateXcoords(detectedFingersInCircle.at(1).getX())) / 2;
+					float oldMidY = (translateYcoords(detectedFingersInCircle.at(0).getY()) + translateYcoords(detectedFingersInCircle.at(1).getY())) / 2;
+					float newMidX = 0;
+					float newMidY = 0;
 
+
+					if (indexOfTheDetectedFingerCircle == 0) {
+						newMidX = (translateXcoords((tcur)->getX()) + translateXcoords(detectedFingersInCircle.at(1).getX())) / 2;
+						newMidY = (translateYcoords((tcur)->getY()) + translateYcoords(detectedFingersInCircle.at(1).getY())) / 2;
+					}
+					else {
+						newMidX = (translateXcoords((tcur)->getX()) + translateXcoords(detectedFingersInCircle.at(0).getX())) / 2;
+						newMidY = (translateYcoords((tcur)->getY()) + translateYcoords(detectedFingersInCircle.at(0).getY())) / 2;
+					}
+					circlePosition.x = circlePosition.x + (newMidX - oldMidX);
+					circlePosition.y = circlePosition.y + (newMidY - oldMidY);
+					//cout << "translation two fingers" << endl;
+
+
+				}
 
 
 
@@ -205,7 +227,7 @@ class Client : public TuioListener {
 						newMidY = (translateYcoords((tcur)->getY()) + translateYcoords(detectedFingersInQuad.at(0).getY())) /2;
 					}
 					moveQuad(newMidX - oldMidX, newMidY- oldMidY);
-					cout << "translation two fingers" << endl;
+					//cout << "translation two fingers" << endl;
 				}
 
 				
@@ -403,7 +425,7 @@ class Client : public TuioListener {
 
 		if (!path1.empty()) {
 
-			if (tcur->getX() < 0.3 && tcur->getY() > 0.3 && tcur->getY() < 0.6) {//chek the Position from the input
+			if (tcur->getX() <= 0.3 && tcur->getY() >= 0.3 && tcur->getY() <= 0.6) {//chek the Position from the input
 				RecognitionResult rResult = Gr.recognize(path1);
 				//cout << "Result Name: " << rResult.name << " Score" << rResult.score;
 
@@ -414,6 +436,7 @@ class Client : public TuioListener {
 					if (rResult.name == "Circle") {
 						if (drawCircle) {
 							drawCircle = false;
+							circlePosition = { 0, 0 };
 							detectedFingersInCircle.clear();
 						}
 						else {
@@ -428,6 +451,11 @@ class Client : public TuioListener {
 					if (rResult.name == "Rectangle") {
 						if (drawQuad) {
 							drawQuad = false;
+							quadPoints = { 
+							{ -0.3, -0.6 },// bottom left corner
+							{ -0.3, 0.6 },// top left corner 
+							{ 0.3, 0.6 }, // top right corner
+							{ 0.3, -0.6 } };// bottom right corner
 							detectedFingersInQuad.clear();
 						}
 						else {
@@ -606,14 +634,29 @@ void draw() {
 
 
 
+		//glPushMatrix();
+		//glBegin(GL_LINE_STRIP);
+		//glLineWidth(1);
+		//glColor3f(0.0f, 0.0f, 0.0f);
+		//glVertex2f(-0.4, -1);
+		//glVertex2f(-0.4, 1);
+		//glEnd();
+		//glPopMatrix(); // TODO
+		
+		
+		
 		glPushMatrix();
 		glBegin(GL_LINE_STRIP);
 		glLineWidth(1);
 		glColor3f(0.0f, 0.0f, 0.0f);
-		glVertex2f(-0.4, -1);
-		glVertex2f(-0.4, 1);
+		glVertex2f(-1, 0.333333334);
+		glVertex2f(-0.333333334, 0.333333334);
+		glVertex2f(-0.333333334, -0.333333334);
+		glVertex2f(-1, -0.333333334);
 		glEnd();
-		glPopMatrix();
+		glPopMatrix(); // TODO
+
+		//if (tcur->getX() <= 0.3 && tcur->getY() >= 0.3 && tcur->getY() <= 0.6) {//chek the Position from the input
 
 
 

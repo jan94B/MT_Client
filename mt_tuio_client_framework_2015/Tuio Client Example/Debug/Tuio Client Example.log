@@ -3,19 +3,21 @@ c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio clie
 c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(58): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
 c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(72): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
 c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(128): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(176): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(245): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(246): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(274): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(283): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(288): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(297): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(198): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(267): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(268): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(296): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
 c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(305): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(313): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(338): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(379): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(386): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(613): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(614): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
-c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(657): warning C4101: "threadID": Unreferenzierte lokale Variable
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(310): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(319): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(327): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(335): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(360): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(401): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(408): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(652): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(653): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(654): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(655): warning C4305: "Argument": Verkürzung von "double" in "GLfloat"
+c:\users\ebru\documents\github\mt_client\mt_tuio_client_framework_2015\tuio client example\main.cpp(700): warning C4101: "threadID": Unreferenzierte lokale Variable
   Tuio Client Example.vcxproj -> C:\Users\Ebru\Documents\GitHub\MT_Client\mt_tuio_client_framework_2015\Debug\Tuio Client Example.exe
